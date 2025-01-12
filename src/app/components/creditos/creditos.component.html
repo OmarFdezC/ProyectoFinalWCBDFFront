@@ -1,0 +1,24 @@
+<div class="credits-container d-flex justify-content-center align-items-center min-vh-100 bg-gradient" 
+     style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);">
+  <div class="credits-card card shadow-lg p-5 rounded-3 text-white" style="max-width: 600px; background: rgba(0, 0, 0, 0.8);">
+    <div class="image-placeholder text-center mb-4">
+      <img src="https://cdn.pixabay.com/photo/2020/07/01/12/58/icon-5359553_1280.png" 
+           alt="Developer Icon"
+           class="placeholder-icon img-fluid rounded-circle border border-light" 
+           style="width: 140px; height: 140px;">
+    </div>
+    <div class="credits-content text-center">
+      <h1 class="display-5 mb-3" style="font-weight: 600;">Creado por:</h1>
+      <h2 class="h4 mb-2 text-uppercase" style="letter-spacing: 1.5px;">{{ developer.name }}</h2>
+      <h3 class="h6 text-light mb-1">{{ developer.group }}</h3>
+      <h3 class="h6 text-info">{{ developer.email }}</h3>
+    </div>
+    <div class="mt-4 text-center">
+      <a href="mailto:{{ developer.email }}" 
+         class="btn btn-outline-light btn-lg rounded-pill px-4" 
+         style="transition: all 0.3s ease;">
+        Contactar
+      </a>
+    </div>
+  </div>
+</div>

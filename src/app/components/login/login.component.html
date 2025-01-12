@@ -1,0 +1,68 @@
+<div class="container-fluid min-vh-100 bg-light py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+      <div class="card border-0 shadow-lg">
+        <!-- Header -->
+        <div class="card-header bg-danger text-white p-4 border-0">
+          <h3 class="text-center mb-0 fw-bold">Proyecto Final</h3>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body p-4">
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <!-- Username field -->
+            <div class="mb-4">
+              <label for="username" class="form-label fw-semibold text-danger">Usuario</label>
+              <div class="input-group">
+                <span class="input-group-text bg-white border-danger">
+                  <i class="bi bi-person text-danger"></i>
+                </span>
+                <input 
+                  placeholder="Ingrese su usuario"
+                  type="text" 
+                  formControlName="username" 
+                  class="form-control form-control-lg shadow-none border-danger"
+                  [ngClass]="{ 'is-invalid': submitted && loginForm.get('username')?.errors }" />
+                <div *ngIf="submitted && loginForm.get('username')?.errors" class="invalid-feedback">
+                  <div *ngIf="loginForm.get('username')?.errors?.['required']">El usuario es requerido</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Password field -->
+            <div class="mb-4">
+              <label for="password" class="form-label fw-semibold text-danger">Contraseña</label>
+              <div class="input-group">
+                <span class="input-group-text bg-white border-danger">
+                  <i class="bi bi-lock text-danger"></i>
+                </span>
+                <input 
+                  placeholder="Ingrese su contraseña"
+                  type="password" 
+                  formControlName="password" 
+                  class="form-control form-control-lg shadow-none border-danger"
+                  [ngClass]="{ 'is-invalid': submitted && loginForm.get('password')?.errors }" />
+                <div *ngIf="submitted && loginForm.get('password')?.errors" class="invalid-feedback">
+                  <div *ngIf="loginForm.get('password')?.errors?.['required']">La contraseña es requerida</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit button -->
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-danger btn-lg text-white">
+                <span>Ingresar</span>
+                <i class="bi bi-arrow-right ms-2"></i>
+              </button>
+            </div>
+
+            <!-- Error message -->
+            <div *ngIf="error" class="alert alert-danger mt-4">
+              {{error}}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,121 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<div class="container mt-4">
+  <div class="card shadow-lg border-0 rounded-4 mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="m-0" style="color: #3c3c3c; font-weight: 600;">Inventario</h2>
+        <button *ngIf="authService.hasAuthority('CREATE')" 
+                class="btn btn-success rounded-3 px-4" 
+                style="background: linear-gradient(135deg, #28a745 0%, #218838 100%); border: none; box-shadow: 0 4px 6px rgba(40, 167, 69, 0.2);"
+                (click)="createInventory()">
+          <i class="fas fa-plus-circle me-2"></i> Nuevo Producto
+        </button>
+      </div>
+
+      <div *ngIf="loading" class="text-center p-5">
+        <div class="spinner-border text-success" role="status" style="color: #28a745 !important;">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+      </div>
+
+      <div *ngIf="!loading" class="table-responsive">
+        <table class="table table-hover">
+          <thead style="background: rgba(40, 167, 69, 0.05);">
+            <tr>
+              <th class="px-4 py-3" style="color: #28a745;">ID de Inventario</th>
+              <th class="px-4 py-3" style="color: #28a745;">ID de Producto</th>
+              <th class="px-4 py-3" style="color: #28a745;">Cantidad</th>
+              <th class="px-4 py-3" style="color: #28a745;">Última Actualización</th>
+              <th class="px-4 py-3" style="color: #28a745;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let inventory of listadoInventory">
+              <td class="px-4 align-middle">{{ inventory.inventory_id || inventory.inventory_id }}</td>
+              <td class="px-4 align-middle">{{ inventory.product_id || inventory.product_id}}</td>
+              <td class="px-4 align-middle">{{ inventory.quantity }}</td>
+              <td class="px-4 align-middle">{{ inventory.lastUpdated | date: 'dd/MM/yyyy' }}</td>
+              <td class="px-4 align-middle">
+                <button *ngIf="authService.hasAuthority('UPDATE')" 
+                        class="btn btn-sm me-2 rounded-3 px-3"
+                        (click)="editInventory(inventory)">
+                  <i class="fas fa-edit me-1"></i> Editar
+                </button>
+                <button *ngIf="authService.hasAuthority('DELETE')" 
+                        class="btn btn-sm rounded-3 px-3"
+                        (click)="eliminarInventory(inventory.inventory_id)">
+                  <i class="fas fa-trash-alt me-1"></i> Eliminar
+                </button>
+              </td>
+            </tr>
+          </tbody>          
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Template -->
+<ng-template #inventoryModal let-modal>
+  <div class="modal-content border-0 rounded-4 shadow">
+    <div class="modal-header border-0 bg-light rounded-top-4">
+      <h5 class="modal-title" id="inventoryModalLabel" style="color: #28a745; font-weight: 600;">
+        {{ isEditMode ? 'Editar Inventario' : 'Registrar nuevo Producto' }}
+      </h5>
+      <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
+    </div>
+    <div class="modal-body p-4">
+      <form [formGroup]="inventoryForm">
+        <div class="mb-4">
+          <label for="productId" class="form-label" style="color: #28a745; font-weight: 500;">ID de Producto</label>
+          <input type="number" id="productId" 
+                 class="form-control form-control-lg rounded-3 border-2" 
+                 formControlName="productId"
+                 [ngClass]="{ 'is-invalid': inventoryForm.get('productId')?.invalid && inventoryForm.get('productId')?.touched }" />
+          <div *ngIf="inventoryForm.get('productId')?.invalid && inventoryForm.get('productId')?.touched"
+               class="invalid-feedback">
+            El ID de producto es requerido.
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="quantity" class="form-label" style="color: #28a745; font-weight: 500;">Cantidad</label>
+          <input type="number" id="quantity" 
+                 class="form-control form-control-lg rounded-3 border-2" 
+                 formControlName="quantity"
+                 [ngClass]="{ 'is-invalid': inventoryForm.get('quantity')?.invalid && inventoryForm.get('quantity')?.touched }" />
+          <div *ngIf="inventoryForm.get('quantity')?.invalid && inventoryForm.get('quantity')?.touched"
+               class="invalid-feedback">
+            La cantidad es requerida.
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <label for="lastUpdated" class="form-label" style="color: #28a745; font-weight: 500;">Última Actualización</label>
+          <input type="date" id="lastUpdated" 
+                 class="form-control form-control-lg rounded-3 border-2" 
+                 formControlName="lastUpdated"
+                 [ngClass]="{ 'is-invalid': inventoryForm.get('lastUpdated')?.invalid && inventoryForm.get('lastUpdated')?.touched }" />
+          <div *ngIf="inventoryForm.get('lastUpdated')?.invalid && inventoryForm.get('lastUpdated')?.touched"
+               class="invalid-feedback">
+            La fecha de actualización es requerida.
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer border-0 p-4">
+      <button type="button" class="btn btn-light rounded-3 px-4" 
+              style="border: 2px solid #dee2e6;"
+              (click)="modal.dismiss()">
+        Cancelar
+      </button>
+      <button type="button" class="btn btn-success rounded-3 px-4" 
+              style="background: linear-gradient(135deg, #28a745 0%, #218838 100%); border: none;"
+              [disabled]="inventoryForm.invalid" 
+              (click)="onSubmitInventory(modal)">
+        {{ isEditMode ? 'Actualizar Producto' : 'Registrar Producto' }}
+      </button>
+    </div>
+  </div>
+</ng-template>
